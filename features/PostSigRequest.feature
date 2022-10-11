@@ -114,4 +114,14 @@ Feature: POST SignatureRequest
     When I post it to /signaturerequest
     Then I get a token
 
+  Scenario: Valid JWT with 250 payloads
+    Given I start with a valid JWT with 250 payloads
+    And I have a valid access_token
+    When I post it to /signaturerequest
+    Then I get a token
 
+  Scenario: Valid JWT with 251 payloads
+    Given I start with a valid JWT with 251 payloads
+    And I have a valid access_token
+    When I post it to /signaturerequest
+    Then I get a token

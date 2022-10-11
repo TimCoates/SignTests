@@ -97,6 +97,14 @@ Given('I start with a valid JWT with 64 payloads', function () {
 	JWT = fs.readFileSync("./tokens/validJWT64.jwt");
 });
 
+Given('I start with a valid JWT with 250 payloads', function () {
+	JWT = fs.readFileSync("./tokens/250.jwt");
+});
+
+Given('I start with a valid JWT with 251 payloads', function () {
+	JWT = fs.readFileSync("./tokens/251.jwt");
+});
+
 
 
 // Support GET /signaturerequest
