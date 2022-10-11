@@ -107,3 +107,11 @@ Feature: POST SignatureRequest
     And I have a valid access_token
     When I post it to /signaturerequest
     Then I get message "JWT payload is not valid. \"payloads[1]\" contains a duplicate value"
+
+  Scenario: Valid JWT with 64 payloads
+    Given I start with a valid JWT with 64 payloads
+    And I have a valid access_token
+    When I post it to /signaturerequest
+    Then I get a token
+
+
