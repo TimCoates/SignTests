@@ -9,7 +9,7 @@ Uses access_tokens provided [here](https://nhsd-apim-testing-int-ns.herokuapp.co
 
 ## Usage
 ```
-$ git clone [repo](https://tbc).
+$ git clone git@github.com:TimCoates/SignTests.git
 $ cd SignTests
 $ npm install
 $ npm test
@@ -29,6 +29,8 @@ BUT the signature can be nonsense.
 
 It checks that `iat` and `exp` exist, but it accepts both expired and not yet valid values in them.
 
-It insists on requests to sign using `RS1` - i.e. it can't switch to RS256 (for SHA-256).
+It insists on requests to sign using `RS1` - i.e. it can't (currently) switch to RS256 (for SHA-256).
 
 It accepts a payload with an empty array of payloads.
+
+It accepts > 250 payloads (there's a stated limit of 250 not enforced).
