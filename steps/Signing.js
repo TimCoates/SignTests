@@ -6,7 +6,7 @@ const When = require("cucumber").When;
 const assert = require('assert');
 const fs = require('fs');
 const APIURL = "https://int.api.service.nhs.uk/signing-service";
-const validJWT = fs.readFileSync("./tokens/validJWT.jwt");
+const validJWT = utils.valid();
 
 const validSignatureResponse = {
 	"signatures": [
@@ -110,7 +110,7 @@ Given('I start with a valid JWT with 251 payloads', function () {
 
 // Support GET /signaturerequest
 Given('I submit a valid SignatureRequest', async function () {
-	JWT = fs.readFileSync("./tokens/validJWT.jwt");
+	JWT = utils.valid();
 	response = await fetch(APIURL + "/signaturerequest", {
 		method: 'POST',
 		headers: {
@@ -195,7 +195,7 @@ Given('I submit and get a valid SignatureRequest', async function () {
 });
 
 Given('I submit and get a SignatureRequest with multiple payloads', async function () {
-	JWT = fs.readFileSync("./tokens/multiple.jwt");
+	JWT = utils.manyPayloads(3);
 	response = await fetch(APIURL + "/signaturerequest", {
 		method: 'POST',
 		headers: {
