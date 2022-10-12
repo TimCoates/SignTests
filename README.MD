@@ -32,5 +32,3 @@ It checks that `iat` and `exp` exist, but it accepts both expired and not yet va
 It insists on requests to sign using `RS1` - i.e. it can't (currently) switch to RS256 (for SHA-256).
 
 It accepts a payload with an empty array of payloads.
-
-It accepts > 250 payloads (there's a stated limit of 250 not enforced).
