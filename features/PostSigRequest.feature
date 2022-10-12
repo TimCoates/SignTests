@@ -124,4 +124,4 @@ Feature: POST SignatureRequest
     Given I start with a valid JWT with 251 payloads
     And I have a valid access_token
     When I post it to /signaturerequest
-    Then I get a token
+    Then I get message "JWT payload is not valid. \"payloads\" must contain less than or equal to 250 items"

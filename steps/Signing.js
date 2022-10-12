@@ -1,4 +1,5 @@
 var prompt = require('prompt-sync')();
+let utils = require("./utils");
 const Given = require("cucumber").Given;
 const Then = require("cucumber").Then;
 const When = require("cucumber").When;
@@ -26,83 +27,83 @@ let signatureResponse;
 
 
 Given('I start with a valid JWT', function () {
-	JWT = validJWT;
+	JWT = utils.valid();
 });
 
 // Failings in the upplied JWT header...
 Given('I start with a JWT signed with RS1', function () {
-	JWT = fs.readFileSync("./tokens/RS1JWT.jwt");
+	JWT = utils.RS1();
 });
 
 Given('I start with a JWT with no alg claim', function () {
-	JWT = fs.readFileSync("./tokens/noalg.jwt");
+	JWT = utils.noALG();
 });
 
 Given('I start with a JWT with no kid claim', function () {
-	JWT = fs.readFileSync("./tokens/nokid.jwt");
+	JWT = utils.noKID();
 });
 
 Given('I start with a JWT with no typ claim', function () {
-	JWT = fs.readFileSync("./tokens/notyp.jwt");
+	JWT = utils.noTYP();
 });
 
 
 // Failings in the supplied JWT Signature
 Given('I start with a JWT with a bogus signature', function () {
-	JWT = fs.readFileSync("./tokens/bogusSig.jwt");
+	JWT = utils.badSignature();
 });
 
 Given('I start with a JWT with no signature', function () {
-	JWT = fs.readFileSync("./tokens/noSig.jwt");
+	JWT = utils.noSignature();
 });
 
 // Failings in the supplied JWT payload
 Given('I start with a JWT with empty payloads array', function () {
-	JWT = fs.readFileSync("./tokens/emptyPayloads.jwt");
+	JWT = utils.emptyPayloads();
 });
 
 Given('I start with a JWT with duplicate IDs in payloads array', function () {
-	JWT = fs.readFileSync("./tokens/duplicateIDs.jwt");
+	JWT = utils.duplicateIDs();
 });
 
 Given('I start with a JWT with no iat in the payload', function () {
-	JWT = fs.readFileSync("./tokens/noiat.jwt");
+	JWT = utils.noIAT();
 });
 
 Given('I start with a JWT with no exp in the payload', function () {
-	JWT = fs.readFileSync("./tokens/noexp.jwt");
+	JWT = utils.noEXP();
 });
 
 Given('I start with a JWT with no iss in the payload', function () {
-	JWT = fs.readFileSync("./tokens/noiss.jwt");
+	JWT = utils.noISS();
 });
 
 Given('I start with a JWT with no sub in the payload', function () {
-	JWT = fs.readFileSync("./tokens/nosub.jwt");
+	JWT = utils.noSUB();
 });
 
 Given('I start with a JWT with no aud in the payload', function () {
-	JWT = fs.readFileSync("./tokens/noaud.jwt");
+	JWT = utils.noAUD();
 });
 
 Given('I start with a JWT signed with a not yet valid certificate', function () {
-	JWT = fs.readFileSync("./tokens/notYet.jwt");
+	JWT = utils.notYetValid();
 });
 
 Given('I start with a JWT signed with an expired certificate', function () {
-	JWT = fs.readFileSync("./tokens/expired.jwt");
+	JWT = utils.expired();
 });
 
 Given('I start with a valid JWT with 64 payloads', function () {
-	JWT = fs.readFileSync("./tokens/validJWT64.jwt");
+	JWT = utils.manyPayloads(64);
 });
 
 Given('I start with a valid JWT with 250 payloads', function () {
-	JWT = fs.readFileSync("./tokens/250.jwt");
+	JWT = utils.manyPayloads(250);
 });
 
 Given('I start with a valid JWT with 251 payloads', function () {
-	JWT = fs.readFileSync("./tokens/251.jwt");
+	JWT = utils.manyPayloads(251);
 });
 
 
