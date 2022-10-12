@@ -86,6 +86,11 @@ Given('I start with a JWT with no aud in the payload', function () {
 	JWT = utils.noAUD();
 });
 
+Given('I start with a JWT with an unusual aud in the payload', function () {
+	JWT = utils.noAUD();
+});
+
+
 Given('I start with a JWT signed with a not yet valid certificate', function () {
 	JWT = utils.notYetValid();
 });

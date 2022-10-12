@@ -97,6 +97,12 @@ function bodyNoAUD() {
 	return base64url(JSON.stringify(clone));
 }
 
+function bodyOddAUD() {
+	let clone = structuredClone(bodyStructure);
+	clone.aud = "https://checkboxrace.com/"
+	return base64url(JSON.stringify(clone));
+}
+
 function bodyNoISS() {
 	let clone = structuredClone(bodyStructure);
 	delete clone.iss;
@@ -196,6 +202,10 @@ function noEXP() {
 
 function noAUD() {
 	return header() + "." + bodyNoAUD() + "." + signature();
+}
+
+function oddAUD() {
+	return header() + "." + bodyOddAUD() + "." + signature();
 }
 
 function noISS() {

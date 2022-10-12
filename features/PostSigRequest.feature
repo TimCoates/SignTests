@@ -84,6 +84,13 @@ Feature: POST SignatureRequest
     When I post it to /signaturerequest
     Then I get message "JWT payload is not valid. \"aud\" is required"
 
+  Scenario: Unexpected aud in payload
+    Given I start with a JWT with an unusual aud in the payload
+    And I have a valid access_token
+    When I post it to /signaturerequest
+    Then I get message "JWT payload is not valid. \"aud\" is required"
+
+
   Scenario: Certificate used was not yet valid
     Given I start with a JWT signed with a not yet valid certificate
     And I have a valid access_token
