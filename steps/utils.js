@@ -103,6 +103,12 @@ function bodyOddAUD() {
 	return base64url(JSON.stringify(clone));
 }
 
+function bodynoURLAUD() {
+	let clone = structuredClone(bodyStructure);
+	clone.aud = "JustAString"
+	return base64url(JSON.stringify(clone));
+}
+
 function bodyNoISS() {
 	let clone = structuredClone(bodyStructure);
 	delete clone.iss;
@@ -256,6 +262,8 @@ module.exports = {
 	noIAT: noIAT,
 	noEXP: noEXP,
 	noAUD: noAUD,
+	oddAUD: oddAUD,
+	bodynoURLAUD: bodynoURLAUD,
 	noISS: noISS,
 	noSUB: noSUB,
 	expired: expired,

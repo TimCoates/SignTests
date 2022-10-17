@@ -19,6 +19,18 @@ All tests are separated into a .feature file per API call, in the `./features` d
 
 All tests use shared implementation in `./steps/Signing.js`.
 
+## Sample output
+```
+New access token ( from https://nhsd-apim-testing-int-ns.herokuapp.com/ ) please: XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+.(node:3721) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+...............................................................................................................................................................................
+
+40 scenarios (40 passed)
+176 steps (180 passed)
+0m10.313s
+```
+
 __NB: Several of the tests currently pass, but should probably fail__
 
 POST /signaturerequest explicitly requires a signature component on the supplied JWT. It also validates that there are (as you might expect) `alg`, `iat`, `exp`, `aud`, `sub`, `kid` and `iss` claims in the payload.
@@ -32,3 +44,5 @@ It checks that `iat` and `exp` exist, but it accepts both expired and not yet va
 It insists on requests to sign using `RS1` - i.e. it can't (currently) switch to RS256 (for SHA-256).
 
 It accepts a payload with an empty array of payloads.
+
+It allows `aud` in the JWT payload to be any URL.
