@@ -33,16 +33,16 @@ New access token ( from https://nhsd-apim-testing-int-ns.herokuapp.com/ ) please
 
 __NB: Several of the tests currently pass, but should probably fail__
 
-POST /signaturerequest explicitly requires a signature component on the supplied JWT. It also validates that there are (as you might expect) `alg`, `iat`, `exp`, `aud`, `sub`, `kid` and `iss` claims in the payload.
+🔴 POST /signaturerequest explicitly requires a signature component on the supplied JWT. It also validates that there are (as you might expect) `alg`, `iat`, `exp`, `aud`, `sub`, `kid` and `iss` claims in the payload.
 
-It insists on `alg` being `RS512`.
+🔴 It insists on `alg` being `RS512`.
 
-BUT the signature can be nonsense.
+🔴 BUT the signature can be nonsense.
 
-It checks that `iat` and `exp` exist, but it accepts both expired and not yet valid values in them.
+🔴 It checks that `iat` and `exp` exist, but it accepts both expired and not yet valid values in them.
 
-It insists on requests to sign using `RS1` - i.e. it can't (currently) switch to RS256 (for SHA-256).
+🔴 It insists on requests to sign using `RS1` - i.e. it can't (currently) switch to RS256 (for SHA-256).
 
-It accepts a payload with an empty array of payloads.
+🔴 It accepts a payload with an empty array of payloads.
 
-It allows `aud` in the JWT payload to be any URL.
+🔴 It allows `aud` in the JWT payload to be any URL.
