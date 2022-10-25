@@ -1,4 +1,3 @@
-var prompt = require('prompt-sync')();
 let utils = require("./utils");
 const Given = require("cucumber").Given;
 const Then = require("cucumber").Then;
@@ -7,6 +6,60 @@ const assert = require('assert');
 const fs = require('fs');
 const APIURL = "https://int.api.service.nhs.uk/signing-service";
 const validJWT = utils.valid();
+
+
+const baseURL = "https://int.api.service.nhs.uk/";
+
+When('I click to sign in', async function () {
+	const clientID = "XSyiT9xE71bTtGsDYLQXbwEOUGJw7G1U";
+	const redirect = "https%3A%2F%2Fnhsd-apim-testing-int-ns.herokuapp.com%2Fcallback";
+	const suffix = "response_type=code&state=1234567890";
+	let url = baseURL + "/oauth2-no-smartcard/authorize?client_id=" + clientID + "&redirect_uri=" + redirect + "&" + suffix;
+	let resp = await fetch(url);
+	let body = await resp.text();
+	// Extract the state from the response...
+	let start = body.indexOf('<input name=\"state\"') + 41;
+	let state = body.substring(start, start + 50);
+	// Store into 'this'
+	this.state = state.substring(0, state.indexOf('\"'));
+	return true;
+});
+
+When('I click the sign in button', async function () {
+	let url = baseURL + "/mock-nhsid-jwks/simulated_auth?response_type=code&client_id=some-client-id&redirect_uri=https://int.api.service.nhs.uk/oauth2-no-smartcard/callback&scope=openid%20nationalrbacaccess&state=" + this.state + "&max_age=300"
+	let body = "state=" + this.state + "&auth_method=N3_SMARTCARD";
+
+	// First call...
+	response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+		},
+		redirect: 'manual',
+		body: body
+	});
+	let location = response.headers.get('location');
+
+	// Second call...
+	response = await fetch(location, { redirect: 'manual' });
+	location = response.headers.get("location");
+
+	// Third call///
+	response = await fetch(location);
+	let html = await response.text();
+
+	// Pull out the access_token from the response...
+	let start = html.indexOf("access_token") + 24;
+	let token = html.substring(start, start + 100);
+	let end = token.indexOf("&");
+	token = token.substring(0, end);
+	//console.log("Final token: " + token);
+
+	// Store token into 'this'
+	this.access_token = token;
+	return true;
+});
 
 const validSignatureResponse = {
 	"signatures": [
@@ -20,8 +73,6 @@ const validSignatureResponse = {
 
 let JWT;
 let response;
-let access_token;
-let valid_access_token = prompt('New access token ( from https://nhsd-apim-testing-int-ns.herokuapp.com/ ) please: ');
 let token;
 let signatureResponse;
 
@@ -125,7 +176,7 @@ Given('I submit a valid SignatureRequest', async function () {
 		headers: {
 			'Content-Type': 'text/plain',
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		},
 		body: JWT
 	});
@@ -134,13 +185,9 @@ Given('I submit a valid SignatureRequest', async function () {
 	return true;
 });
 
-// Generic to handle access tokens
-Given('I have a valid access_token', function () {
-	access_token = valid_access_token;
-});
 
 Given('I have AN EXPIRED access_token', function () {
-	access_token = "SqFsotA0tFn2EbArOrO9wG0Jqec3";
+	this.access_token = "SqFsotA0tFn2EbArOrO9wG0Jqec3";
 });
 
 // Support for POST /signatureresponse
@@ -185,7 +232,7 @@ Given('I submit and get a valid SignatureRequest', async function () {
 		headers: {
 			'Content-Type': 'text/plain',
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		},
 		body: JWT
 	});
@@ -195,7 +242,7 @@ Given('I submit and get a valid SignatureRequest', async function () {
 	response = await fetch(APIURL + "/signaturerequest/" + token, {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	}).then(async response => {
 		//console.log("Response: " + await response.text());
@@ -210,7 +257,7 @@ Given('I submit and get a SignatureRequest with multiple payloads', async functi
 		headers: {
 			'Content-Type': 'text/plain',
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		},
 		body: JWT
 	});
@@ -220,7 +267,7 @@ Given('I submit and get a SignatureRequest with multiple payloads', async functi
 	response = await fetch(APIURL + "/signaturerequest/" + token, {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	}).then(async response => {
 		//console.log("Response: " + await response.text());
@@ -235,7 +282,7 @@ When('I post it to /signaturerequest', async function () {
 		headers: {
 			'Content-Type': 'text/plain',
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		},
 		body: JWT
 	});
@@ -246,7 +293,7 @@ When('I post it to /signatureresponse', async function () {
 	response = await fetch(APIURL + "/signatureresponse/" + token, {
 		method: 'POST',
 		headers: {
-			'Authorization': 'Bearer ' + access_token,
+			'Authorization': 'Bearer ' + this.access_token,
 			'Content-Type': 'application/JSON',
 		},
 		body: JSON.stringify(signatureResponse)
@@ -258,7 +305,7 @@ When('I post it to /signatureresponse using the wrong token', async function () 
 	response = await fetch(APIURL + "/signatureresponse/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZDA2NWJmZGJh", {
 		method: 'POST',
 		headers: {
-			'Authorization': 'Bearer ' + access_token,
+			'Authorization': 'Bearer ' + this.access_token,
 			'Content-Type': 'application/JSON',
 		},
 		body: JSON.stringify(signatureResponse)
@@ -270,7 +317,7 @@ When('I post it to /signatureresponse using an invalid token', async function ()
 	response = await fetch(APIURL + "/signatureresponse/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZD___WJmZGJh", {
 		method: 'POST',
 		headers: {
-			'Authorization': 'Bearer ' + access_token,
+			'Authorization': 'Bearer ' + this.access_token,
 			'Content-Type': 'application/JSON',
 		},
 		body: JSON.stringify(signatureResponse)
@@ -282,7 +329,7 @@ When('I GET from /signaturerequest', async function () {
 	response = await fetch(APIURL + "/signaturerequest/" + token, {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;
@@ -292,7 +339,7 @@ When('I GET from /signaturerequest with an incorrect token', async function () {
 	response = await fetch(APIURL + "/signaturerequest/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZDA2NWJmZGJh", {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;
@@ -302,7 +349,7 @@ When('I GET from /signaturerequest with an invalid token', async function () {
 	response = await fetch(APIURL + "/signaturerequest/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZD___WJmZGJh", {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;
@@ -315,7 +362,7 @@ When('I GET from /signatureresponse', async function () {
 	response = await fetch(APIURL + "/signatureresponse/" + token, {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;
@@ -325,7 +372,7 @@ When('I GET from /signatureresponse with an incorrect token', async function () 
 	response = await fetch(APIURL + "/signatureresponse/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZDA2NWJmZGJh", {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;
@@ -336,7 +383,7 @@ When('I GET from /signatureresponse with an invalid token', async function () {
 	response = await fetch(APIURL + "/signatureresponse/YWJmNjZiZTItYTE3NC00N2RlLTkxNzgtYzFjZD___WJmZGJh", {
 		headers: {
 			'Accept': 'application/json',
-			'Authorization': 'Bearer ' + access_token
+			'Authorization': 'Bearer ' + this.access_token
 		}
 	});
 	return true;

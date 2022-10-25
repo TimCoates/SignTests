@@ -1,7 +1,8 @@
 Feature: GET SignatureResponse
 
   Scenario: Happy path
-    Given I have a valid access_token
+    Given I click to sign in
+    And I click the sign in button
     And I submit and get a valid SignatureRequest
 	  And I have a valid SignatureResponse
     And I post it to /signatureresponse
@@ -10,7 +11,8 @@ Feature: GET SignatureResponse
 
 
   Scenario: Expired access_token
-    Given I have a valid access_token
+    Given I click to sign in
+    And I click the sign in button
     And I submit and get a valid SignatureRequest
 	  And I have a valid SignatureResponse
     And I post it to /signatureresponse
@@ -19,7 +21,8 @@ Feature: GET SignatureResponse
     Then I get statusCode 401
 
   Scenario: Incorrect token
-    Given I have a valid access_token
+    Given I click to sign in
+    And I click the sign in button
     And I submit and get a valid SignatureRequest
 	  And I have a valid SignatureResponse
     And I post it to /signatureresponse
@@ -27,7 +30,8 @@ Feature: GET SignatureResponse
     Then I get statusCode 404
 
   Scenario: Invalid token
-    Given I have a valid access_token
+    Given I click to sign in
+    And I click the sign in button
     And I submit and get a valid SignatureRequest
 	  And I have a valid SignatureResponse
     And I post it to /signatureresponse
