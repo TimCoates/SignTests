@@ -6,8 +6,6 @@ const assert = require('assert');
 const fs = require('fs');
 const APIURL = "https://int.api.service.nhs.uk/signing-service";
 const validJWT = utils.valid();
-
-
 const baseURL = "https://int.api.service.nhs.uk/";
 
 When('I click to sign in', async function () {
