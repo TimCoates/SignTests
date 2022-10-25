@@ -5,7 +5,7 @@ Requires a minimum of node v17 due to the use of fetch().
 
 Uses npm packages (so yes node_modules is huge);
 
-Uses access_tokens provided [here](https://nhsd-apim-testing-int-ns.herokuapp.com/)
+Uses access_tokens provided [here](https://nhsd-apim-testing-int-ns.herokuapp.com/), the retrieval of the `access_token` is automated
 
 ## Usage
 ```
@@ -21,14 +21,18 @@ All tests use shared implementation in `./steps/Signing.js`.
 
 ## Sample output
 ```
-New access token ( from https://nhsd-apim-testing-int-ns.herokuapp.com/ ) please: XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-.(node:3721) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+user@hostname:/SignTests$ npm test
+
+> signtests@1.0.0 test
+> ./node_modules/.bin/cucumber-js features/ -r steps/
+
+(node:2577) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-...............................................................................................................................................................................
+...........................................................................................................................................................................................................................
 
 40 scenarios (40 passed)
-176 steps (180 passed)
-0m10.313s
+219 steps (219 passed)
+0m26.365s
 ```
 
 __NB: Several of the tests currently pass, but should probably fail__
